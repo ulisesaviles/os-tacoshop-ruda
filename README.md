@@ -13,3 +13,4 @@ The Operating System's final project
 
 ## Team members
 * Ulises Aviles (ulisesaviles)
+* David Dennis (DavidDennisC)
