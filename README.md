@@ -15,3 +15,4 @@ The Operating System's final project
 * Ulises Aviles (ulisesaviles)
 * David Dennis (DavidDennisC)
 * Abner Silva (Godys05)
+* René Núñez (ReneN25)
