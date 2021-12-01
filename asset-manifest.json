@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/os-tacoshop-ruda/static/css/main.39a972e0.chunk.css",
-    "main.js": "/os-tacoshop-ruda/static/js/main.34f47962.chunk.js",
-    "main.js.map": "/os-tacoshop-ruda/static/js/main.34f47962.chunk.js.map",
+    "main.css": "/os-tacoshop-ruda/static/css/main.58ccd51e.chunk.css",
+    "main.js": "/os-tacoshop-ruda/static/js/main.93b82333.chunk.js",
+    "main.js.map": "/os-tacoshop-ruda/static/js/main.93b82333.chunk.js.map",
     "runtime-main.js": "/os-tacoshop-ruda/static/js/runtime-main.ccb36966.js",
     "runtime-main.js.map": "/os-tacoshop-ruda/static/js/runtime-main.ccb36966.js.map",
-    "static/js/2.fae6f23b.chunk.js": "/os-tacoshop-ruda/static/js/2.fae6f23b.chunk.js",
-    "static/js/2.fae6f23b.chunk.js.map": "/os-tacoshop-ruda/static/js/2.fae6f23b.chunk.js.map",
+    "static/js/2.c87c027f.chunk.js": "/os-tacoshop-ruda/static/js/2.c87c027f.chunk.js",
+    "static/js/2.c87c027f.chunk.js.map": "/os-tacoshop-ruda/static/js/2.c87c027f.chunk.js.map",
     "index.html": "/os-tacoshop-ruda/index.html",
-    "static/css/main.39a972e0.chunk.css.map": "/os-tacoshop-ruda/static/css/main.39a972e0.chunk.css.map",
-    "static/js/2.fae6f23b.chunk.js.LICENSE.txt": "/os-tacoshop-ruda/static/js/2.fae6f23b.chunk.js.LICENSE.txt"
+    "static/css/main.58ccd51e.chunk.css.map": "/os-tacoshop-ruda/static/css/main.58ccd51e.chunk.css.map",
+    "static/js/2.c87c027f.chunk.js.LICENSE.txt": "/os-tacoshop-ruda/static/js/2.c87c027f.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.ccb36966.js",
-    "static/js/2.fae6f23b.chunk.js",
-    "static/css/main.39a972e0.chunk.css",
-    "static/js/main.34f47962.chunk.js"
+    "static/js/2.c87c027f.chunk.js",
+    "static/css/main.58ccd51e.chunk.css",
+    "static/js/main.93b82333.chunk.js"
   ]
 }
