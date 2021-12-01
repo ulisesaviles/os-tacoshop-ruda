@@ -2,7 +2,7 @@
 
 <img width="30%" alt="portfolio_view" src="https://raw.githubusercontent.com/ulisesaviles/os-tacoshop-ruda/main/RUDA.png">
 
-The Operating System's final project
+The Operating System's final project.
 
 ### What does RUDA stands for?
 * "R" from René
