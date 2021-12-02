@@ -6,7 +6,6 @@ const Handler = (setOrdersFunction, taqueroType) => {
 
   const setOrders = (orders) => {
     let generalOrders = getOrders();
-    setOrdersFunction(generalOrders);
     generalOrders[taqueroType] = orders;
     setOrdersFunction(generalOrders);
     localStorage.setItem("orders", JSON.stringify(generalOrders));
