@@ -16,7 +16,7 @@ const Handler = (taqueros, quesadilleros, taqueroTypes) => {
   const start = () => {
     // Insert 10 orders and start working
     for (let i = 0; i < taqueros.length; i++) {
-      taqueros[i].insertToQueue(getOrders(10));
+      taqueros[i].insertToQueue(getOrders(5));
     }
   };
   return { start, insertTaquero };
