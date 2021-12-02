@@ -1,21 +1,206 @@
-/* Global */
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  /* background-color: rgb(0,0,0); */
-  /* color: white */
+/* Variables */
+:root {
+  --stickManColor: rgb(0,0,0);
+  --fontPrimary: rgb(0,0,0);
+  --backgroundColor: white;
+  --containerColor:rgb(240, 240, 240) ;
+  --logsContainer: var(--containerColor);
+  --fontSecondary: rgb(100, 100, 100);
+  --containerBorderRadius: 10px;
+  --shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+  --transition: all ease-in-out 200ms;
+  --btn: rgb(238, 127, 0);
+  --btnShadow: 0px 0px 30px rgba(238, 127, 0, 0.5);
+  --btnFont: rgb(255, 255, 255);
+  --headerColor: rgb(0,0,0);
+  --borders: rgb(199, 199, 199);
 }
 
+/* Global */
+::-webkit-scrollbar {
+  width: 5px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0); 
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(220, 220, 220); 
+  border-radius: 100px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(200, 200, 200); 
+}
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;  
+}
 .App {
   text-align: center;
 }
 
+/* Header */
+.header {
+  height: 10vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: var(--headerColor);
+  box-shadow: var(--shadow);
+}
+.logo {
+  height: 8vh;
+  width: auto;
+  position: absolute;
+  left: 5vw;
+}
+.startBtn {
+  border: 0;
+  height: 4vh;
+  width: 15vw;
+  border-radius: 100px;
+  background-color: var(--btn);
+  cursor: pointer;
+  transition: var(--transition);
+  border: 0;
+  color: var(--btnFont);
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.running {
+  border: 0;
+  height: 4vh;
+  width: 15vw;
+  border-radius: 100px;
+  border: 1px solid var(--fontSecondary);
+  color: var(--fontSecondary);
+  font-style: italic;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.startBtn:hover {
+  box-shadow: var(--btnShadow);
+}
+.chrono {
+  margin: 0;
+  color: var(--fontSecondary);
+  margin-top: 2px
+}
+
+/* Content structure */
+.contentContainer {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  min-height: 90vh;
+  max-height: 90vh;
+  overflow-y: scroll;
+}
+.contentLeftContainer{
+  width: 70vw;
+}
+
+/* Taqueros */
+.taquerosContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+.taquerosTitle {
+  margin: 10px 0 -10px 0;
+  font-weight: 700;
+}
+.taqueroContainer {
+  max-width: calc(70vw / 6);
+}
+.taqueroName {
+  font-size: 18px;
+  min-height: 40px;
+  max-height: 40px;
+  font-weight: 600;
+}
+.stickMan {
+  color: var(--stickManColor);
+  font-size: 50px;
+}
+.taqueroMetadataContainer {
+  overflow-y: scroll;
+  border-radius: var(--containerBorderRadius);
+  margin-top: 10px;
+  padding: 5px 10px;
+  border: 1px solid var(--borders);
+  transition: var(--transition);
+}
+.taqueroMetadataContainer:hover {
+  box-shadow: var(--shadow);
+  border: 1px solid var(--backgroundColor);
+}
+.taqueroMetadataRowContainer {
+  display: flex;
+  align-items: center;
+}
+.taqueroMetadataRowTitle {
+  margin: 0;
+  font-size: 14px;
+  margin-right: 5px;
+  font-weight: 500;
+}
+.metadata {
+  font-size: 14px;
+  margin: 0 0 5px 0;
+}
+.actualMetadata {
+  margin: 0
+}
+
+/* Logs */
 .logsContainer {
   height: 50vh;
-  background-color: red;
+  background-color: var(--logsContainer);
+  border-radius: var(--containerBorderRadius);
+  box-shadow: var(--shadow);
+  margin: 20px;
+  width: calc(30vw - 80px);
+  max-height: calc(90vh - 60px);
+  min-height: calc(90vh - 60px);
+  padding: 10px 20px;
+  overflow-y: hidden;
+}
+.logsSubtitle {
+  margin: 0;
+  color: var(--fontSecondary)
+}
+.logsTitle {
+  margin: 0
+}
+.logsContentContainer {
   overflow-y: scroll;
+  max-height: calc(90vh - 104px);
+}
+.logContainer {
+  margin-bottom: 15px;
+  text-align: left;
+}
+.logHeaderContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  max-width: fit-content;
+}
+.logTitle {
+  margin: 0 5px 0 0;
+  font-weight: 600;
+  font-size: 15px;
+}
+.logTime {
+  margin: 0;
+  color: var(--fontSecondary)
 }
