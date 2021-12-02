@@ -281,10 +281,9 @@ const App = () => {
 export default App;
 
 // TO-DO'S
-// WED
-//   Adapt sistem to actual orders
-//   Create actual frontend
 // THU
+//   Quesadillero
+//   Adapt sistem to actual orders
 //   Create Asignación y balanceo
 // FRI
 //   Scheduler
