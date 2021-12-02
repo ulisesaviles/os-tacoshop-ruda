@@ -9,9 +9,6 @@ import Taquero from "./objects/taquero";
 import LogsHandler from "./config/logsHandler";
 import AllocationHandler from "./config/allocationAndBalancing";
 
-// Icons
-import { IoMan } from "react-icons/io5";
-
 const App = () => {
   // Config constants
   const [isRunning, setIsRunning] = useState(false);
