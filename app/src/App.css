@@ -106,6 +106,9 @@ body {
 }
 .contentLeftContainer{
   width: 70vw;
+  max-height: 90vh;
+  overflow-y: scroll;
+  padding-bottom: 5vh;
 }
 
 /* Taqueros */
@@ -205,4 +208,71 @@ body {
 .logTime {
   margin: 0;
   color: var(--fontSecondary)
+}
+
+/* Table */
+.tableContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: calc(100% - 50px);
+  margin-top: 20px;
+}
+.tableRow {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+}
+.cell {
+  width: 150px;
+  margin: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  transition: all 0.1s ease-in-out;
+}
+.cell:hover {
+  transform: scale(1.2);
+  border-radius: 100px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.cellText {
+  font-size: 14px;
+  margin: 0;
+  text-align: center;
+}
+.cellHeader {
+  color: rgb(255, 255, 255);
+  background-color: rgb(0, 0, 0);
+  font-weight: 600;
+}
+.cell1 {
+  background-color: rgb(230, 230, 230);
+}
+.tableSuperContainer {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  flex-direction: column;
+}
+.noOrders {
+  opacity: 0.5;
+  margin: 0 0 10px 0;
+}
+
+/* Orders section */
+.ordersContainer {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.orders {
+  margin: 20px 0 0 0 ;
+  font-weight: 600;
+}
+.tableName {
+  font-weight: 500;
+  margin: 0
 }
