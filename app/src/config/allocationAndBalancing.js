@@ -205,6 +205,7 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
         order.request_id ? order.request_id : "with unknown id"
       } rejected due to: ${reazon}`
     );
+    order.status = "rejected";
     handlers.rejected.pushOrder(order);
   };
 
