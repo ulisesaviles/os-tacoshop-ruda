@@ -371,8 +371,8 @@ export default App;
 
 // TO-DO'S
 // FRI
-//   Create balanceo (when taquero needs to rest or Quesadillas)
 //   Quesadillero should give quesadillas to people who need it
+//   Balanceo (when taquero needs to rest)
 //   Scheduler
 // SAT
 //   Chalanes
