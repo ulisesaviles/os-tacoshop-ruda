@@ -4,6 +4,13 @@ const Handler = (setOrdersFunction, taqueroType) => {
     return JSON.parse(orders);
   };
 
+  const pushOrder = (order) => {
+    let generalOrders = getOrders();
+    generalOrders[taqueroType].push(order);
+    setOrdersFunction(generalOrders);
+    localStorage.setItem("orders", JSON.stringify(generalOrders));
+  };
+
   const setOrders = (orders) => {
     let generalOrders = getOrders();
     generalOrders[taqueroType] = orders;
@@ -11,7 +18,7 @@ const Handler = (setOrdersFunction, taqueroType) => {
     localStorage.setItem("orders", JSON.stringify(generalOrders));
   };
 
-  return { getAllOrders: getOrders, setOrders };
+  return { getAllOrders: getOrders, setOrders, pushOrder };
 };
 
 export default Handler;
