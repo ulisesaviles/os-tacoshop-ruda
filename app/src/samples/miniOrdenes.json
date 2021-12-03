@@ -15,7 +15,7 @@
         "type": "taco",
         "meat": "suadero",
         "status": "open",
-        "quantity": 29,
+        "quantity": 2,
         "finished_products": 0,
         "delay_counter": 0,
         "ingredients": ["salsa", "cilantro", "cebolla"]
@@ -32,7 +32,7 @@
         "type": "quesadilla",
         "meat": "suadero",
         "status": "open",
-        "quantity": 69,
+        "quantity": 6,
         "ingredients": []
       },
       {
@@ -40,7 +40,7 @@
         "type": "taco",
         "meat": "suadero",
         "status": "open",
-        "quantity": 35,
+        "quantity": 3,
         "ingredients": ["cebolla", "salsa"]
       },
       {
@@ -48,7 +48,7 @@
         "type": "taco",
         "meat": "asada",
         "status": "open",
-        "quantity": 69,
+        "quantity": 6,
         "ingredients": ["cebolla", "cilantro"]
       },
       {
@@ -56,7 +56,7 @@
         "type": "taco",
         "meat": "tripa",
         "status": "open",
-        "quantity": 17,
+        "quantity": 1,
         "ingredients": ["salsa", "cilantro", "guacamole"]
       },
       {
@@ -64,7 +64,7 @@
         "type": "taco",
         "meat": "cabeza",
         "status": "open",
-        "quantity": 91,
+        "quantity": 9,
         "ingredients": ["guacamole", "cebolla", "cilantro"]
       }
     ]
@@ -91,7 +91,7 @@
         "type": "taco",
         "meat": "asada",
         "status": "open",
-        "quantity": 81,
+        "quantity": 8,
         "ingredients": []
       },
       {
@@ -99,7 +99,7 @@
         "type": "quesadilla",
         "meat": "adobada",
         "status": "open",
-        "quantity": 51,
+        "quantity": 5,
         "ingredients": ["cilantro"]
       },
       {
@@ -107,7 +107,7 @@
         "type": "taco",
         "meat": "adobada",
         "status": "open",
-        "quantity": 90,
+        "quantity": 9,
         "ingredients": ["cebolla"]
       },
       {
@@ -115,7 +115,7 @@
         "type": "taco",
         "meat": "asada",
         "status": "open",
-        "quantity": 66,
+        "quantity": 6,
         "ingredients": ["salsa", "guacamole"]
       }
     ]
@@ -142,7 +142,7 @@
         "type": "taco",
         "meat": "adobada",
         "status": "open",
-        "quantity": 16,
+        "quantity": 1,
         "ingredients": ["salsa", "cilantro"]
       },
       {
@@ -150,7 +150,7 @@
         "type": "taco",
         "meat": "cabeza",
         "status": "open",
-        "quantity": 82,
+        "quantity": 8,
         "ingredients": []
       }
     ]
