@@ -1,27 +1,23 @@
-{
-  "datetime": "2017-01-01 23:23:23",
-  "request_id": "123-123-123",
-  "orden": [
-    {
-      "part_id": "123-222",
-      "type": "mulita",
-      "meat": "asada",
-      "quantity": 1,
-      "ingredients": []
-    }
-  ],
-  "answer": {
-    "start_time": "",
-    "end_date": "",
-    "steps": [
+[
+  {
+    "datetime": "2017-01-01 23:23:23",
+    "request_id": "123-123-123",
+    "orden": [
       {
-        "step": 1,
-        "state": "running",
-        "action": "working on orden",
-        "part_id": "123-123",
-        "startTime": "",
-        "endTime": ""
+        "part_id": "123-222",
+        "type": "mulita",
+        "meat": "asada",
+        "quantity": 1,
+        "ingredients": []
+      }
+    ],
+    "response": [
+      {
+        "who": "",
+        "when": "",
+        "what": "what",
+        "time": 152
       }
     ]
   }
-}
+]
