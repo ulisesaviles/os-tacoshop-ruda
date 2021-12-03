@@ -5,10 +5,15 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 
 // Objects
-import LogsHandler from "./config/logsHandler";
-import AllocationHandler from "./config/allocationAndBalancing";
 import Taquero from "./objects/taquero";
 import Quesadillero from "./objects/quesadillero";
+
+// Handlers
+import LogsHandler from "./config/logsHandler";
+import AllocationHandler from "./config/allocationAndBalancing";
+
+// Components
+import Table from "./components/table";
 
 // Sample input
 import sampleInput from "./samples/miniOrdenes.json";
@@ -34,8 +39,8 @@ const App = () => {
   // Taqueros/orders-related
   const taqueroTypes = [
     { name: "tripa y cabeza", canWorkOn: ["tripa", "cabeza"] },
-    { name: "asada y suadero (1)", canWorkOn: ["asada", "suadero"] },
-    { name: "asada y suadero (2)", canWorkOn: ["asada", "suadero"] },
+    { name: "asada y suadero 1", canWorkOn: ["asada", "suadero"] },
+    { name: "asada y suadero 2", canWorkOn: ["asada", "suadero"] },
     { name: "adobada", canWorkOn: ["adobada"] },
   ];
   const getDefaultQueuesFor = (types) => {
@@ -104,9 +109,41 @@ const App = () => {
   );
 
   // Functions
+  const capitalize = (str = "") => {
+    return `${str.charAt(0).toUpperCase()}${str.substring(1, str.length)}`;
+  };
+
   const cleanLogs = () => {
     localStorage.setItem("logs", JSON.stringify([]));
     setLogs([]);
+  };
+
+  const formatOrderForTable = (order_) => {
+    let order = { ...order_ };
+    console.log(order.datetime);
+    order.datetime = formatTimeForLogs(order.datetime);
+    order.parts = order.orden.length;
+    order.finishedParts = 0;
+    order.productQuantity = 0;
+    for (let i = 0; i < order.orden.length; i++) {
+      const part = order.orden[i];
+      if (part.status === "done") order.finishedParts++;
+      order.productQuantity += part.quantity;
+    }
+    delete order.orden;
+    order.stepsDone = order.response !== undefined ? order.response.length : 0;
+    delete order.response;
+    return order;
+  };
+
+  const formatOrdersForTable = (orders) => {
+    console.log(orders);
+    let res = [];
+    for (let i = 0; i < orders.length; i++) {
+      if (orders[i] == null) continue;
+      res.push(formatOrderForTable(orders[i]));
+    }
+    return res;
   };
 
   const formatTimeForLogs = (timestamp) => {
@@ -339,10 +376,12 @@ const App = () => {
               </div>
             </div>
           </div>
-          <div>
+          <h2 className="orders">Orders</h2>
+          <div className="ordersContainer">
             {Object.keys(orders).map((key) => (
-              <div key={key}>
-                {key}: {JSON.stringify(orders[key])}
+              <div key={key} className="tableSuperContainer">
+                <p className="tableName">{capitalize(key)}</p>
+                <Table data={formatOrdersForTable([...orders[key]])} />
               </div>
             ))}
           </div>
