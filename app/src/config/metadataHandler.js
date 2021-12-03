@@ -16,16 +16,16 @@ const Handler = (setMetadataFunction, taqueroName) => {
     return JSON.parse(metadata);
   };
 
-  const madeTaco = () => {
+  const madeTacos = (quantity) => {
     let metadata = getMetadata();
-    // One less in queue
+    // One less order in queue
     metadata[taqueroName].queueLength--;
     // Not working on any
     metadata[taqueroName].workingOn = null;
     // One taco less in rest
-    metadata[taqueroName].rest.untilNeeded--;
+    metadata[taqueroName].rest.untilNeeded -= quantity;
     // One taco less in fan
-    metadata[taqueroName].fan.untilNeeded--;
+    metadata[taqueroName].fan.untilNeeded -= quantity;
     // Set it
     setMetadataFunction(metadata);
     localStorage.setItem("metadata", JSON.stringify(metadata));
@@ -44,7 +44,7 @@ const Handler = (setMetadataFunction, taqueroName) => {
     setMetadata("tortillas", metadata[taqueroName].tortillas);
   };
 
-  return { getMetadata, setMetadata, consumeFillings, useTortilla, madeTaco };
+  return { getMetadata, setMetadata, consumeFillings, useTortilla, madeTacos };
 };
 
 export default Handler;
