@@ -78,6 +78,10 @@ const Taquero = (
     return [null, null];
   };
 
+  const getTortillas = () => {
+    return metadataHandler.getMetadata()[name].tortillas;
+  };
+
   const giveQuesadilla = () => {
     const newStock = metadataHandler.getMetadata()[name].quesadillasInStock + 1;
     metadataHandler.setMetadata("quesadillasInStock", newStock);
@@ -157,6 +161,7 @@ const Taquero = (
     part.status = "working";
     metadataHandler.setMetadata("workingOn", part.part_id);
     // Make the tacos
+    let quantity = 0;
     for (let i = 0; part.quantity > part.finished_products; i++) {
       // If quesdilla, use 1
       if (part.type === "quesadilla") {
@@ -172,7 +177,7 @@ const Taquero = (
         log(`I have not enought fillings to continue`);
         part.status = "open";
         break;
-      } else {
+      } else if (part.type !== "quesadilla") {
         // Taco time
         metadataHandler.useTortilla();
         await timeout(1000);
@@ -182,6 +187,7 @@ const Taquero = (
       // Sum
       part.finished_products += 1;
       if (part.quantity === part.finished_products) part.status = "done";
+      quantity++;
     }
     part.status = part.status === "done" ? part.status : "open";
     // Set it
@@ -189,12 +195,12 @@ const Taquero = (
     queue[0].response.push({
       who: `Taquero de ${name}`,
       when: new Date().toISOString(),
-      what: `Made ${part.finished_products} ${part.meat} ${part.type} (part ${part.part_id})`,
+      what: `Made ${quantity} ${part.meat} ${part.type} (part ${part.part_id})`,
       time: Date.now() - start,
     });
     reAllocateOrder(queue.shift());
     ordersHandler.setOrders(queue);
-    metadataHandler.madeTacos(part.quantity);
+    metadataHandler.madeTacos(quantity);
     // Log it
     log(`Finished part "${part.part_id}" ${queue.length} left`);
     // Return it
@@ -214,6 +220,7 @@ const Taquero = (
     giveQuesadilla,
     restart,
     fillFilling,
+    getTortillas,
   };
 };
 

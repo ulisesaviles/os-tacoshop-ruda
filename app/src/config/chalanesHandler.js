@@ -1,5 +1,5 @@
 const Handler = (taqueroTypes, taqueros, logsHandler) => {
-  const fillings = ["guacamole", "salsa", "tortillas", "cilantro", "cebolla"];
+  const fillings = ["guacamole", "salsa", "cilantro", "cebolla"];
 
   const log = (chalanName, taqueroName, filling) => {
     logsHandler.log(
@@ -60,7 +60,7 @@ const Handler = (taqueroTypes, taqueros, logsHandler) => {
         if (await taquero.fillFilling(filling))
           log(chalan.name, taquero.name, filling);
         milisecs += Date.now() - tempTime;
-        if (milisecs > 20_000) {
+        if (milisecs > 20_000 || taquero.getTortillas() < 25) {
           await placeTortillas(chalan);
           milisecs = 0;
         }
