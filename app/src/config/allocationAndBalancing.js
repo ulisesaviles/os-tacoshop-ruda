@@ -50,7 +50,7 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
       insertTaquero(min.taqueroIndex, [order]);
       return true;
     } else if (orderIsComplete(order)) {
-      completeOrder(order);
+      completeOrder({ ...order });
       return true;
     } else {
       const orders = JSON.parse(localStorage.getItem("ordersToReAllocate"));
@@ -98,7 +98,7 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
         return invalid;
       }
       if (order.status !== "open") {
-        rejectOrder(order, "invalid status");
+        rejectOrder(order, `invalid status '${order.status}'`);
         return invalid;
       }
       let aPartIsInvalid = false;
@@ -222,7 +222,7 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
       const order = filteredOrder(input[i]);
       if (order.invalid) continue;
       if (order.orden.length === 0) {
-        handleEmptyOrder(order);
+        handleEmptyOrder({ ...order });
         continue;
       }
       allocateOrder(order);
