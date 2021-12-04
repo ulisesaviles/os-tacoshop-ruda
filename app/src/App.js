@@ -11,6 +11,7 @@ import Quesadillero from "./objects/quesadillero";
 // Handlers
 import LogsHandler from "./config/logsHandler";
 import AllocationHandler from "./config/allocationAndBalancing";
+import OrdersHandler from "./config/ordersStateHandler";
 
 // Components
 import Table from "./components/table";
@@ -168,6 +169,10 @@ const App = () => {
     );
   };
 
+  const restartOrders = () => {
+    OrdersHandler(setOrders, null, defaultQueues).restartRUDA();
+  };
+
   const setup = () => {
     // Set initial local storage values
     localStorage.setItem("orders", JSON.stringify(defaultQueues));
@@ -184,6 +189,7 @@ const App = () => {
     setIsRunning(true);
     cleanLogs();
     restartMetadata();
+    restartOrders();
     localStorage.setItem("RUDAIsWorking", JSON.stringify(true));
 
     // Start Allocation and balance handler
