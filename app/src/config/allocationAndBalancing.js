@@ -48,6 +48,10 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
     }
     if (min.name !== null) {
       insertTaquero(min.taqueroIndex, [order]);
+      logsHandler.log(
+        "Allocation and balancing:",
+        `Asigned order ${order.request_id} to ${min.name}`
+      );
       return true;
     } else if (orderIsComplete(order)) {
       completeOrder({ ...order });
@@ -246,10 +250,6 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
       let ordersLeft = [];
       for (let i = 0; i < orders.length; i++) {
         const order = orders[i];
-        logsHandler.log(
-          "Allocation and balancing:",
-          `Will re-alocate order ${order.request_id}`
-        );
         if (!allocateOrder(order)) ordersLeft.push(order);
       }
       localStorage.setItem("ordersToReAllocate", JSON.stringify(ordersLeft));
