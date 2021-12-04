@@ -1,5 +1,5 @@
 // React imports
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 // Styles
 import "./App.css";
@@ -17,7 +17,7 @@ import OrdersHandler from "./config/ordersStateHandler";
 import Table from "./components/table";
 
 // Sample input
-import sampleInput from "./samples/miniOrdenes.json";
+import sampleInput from "./samples/ordenes.json";
 
 const App = () => {
   // Config constants
@@ -50,8 +50,8 @@ const App = () => {
       const type = types[i];
       orders[type.name] = [];
     }
-    orders.rejected = [];
     orders.done = [];
+    orders.rejected = [];
     return orders;
   };
   const defaultQueues = getDefaultQueuesFor(taqueroTypes);
@@ -121,7 +121,6 @@ const App = () => {
 
   const formatOrderForTable = (order_) => {
     let order = { ...order_ };
-    console.log(order.datetime);
     order.datetime = formatTimeForLogs(order.datetime);
     order.parts = order.orden.length;
     order.finishedParts = 0;
@@ -138,7 +137,6 @@ const App = () => {
   };
 
   const formatOrdersForTable = (orders) => {
-    console.log(orders);
     let res = [];
     for (let i = 0; i < orders.length; i++) {
       if (orders[i] == null) continue;
@@ -416,10 +414,10 @@ export default App;
 
 // TO-DO'S
 // FRI
-//   Quesadillero should give quesadillas to people who need it
-//   Balanceo (when taquero needs to rest)
+//   Chalanes
+//   Rest
 //   Scheduler
 // SAT
-//   Chalanes
+//   Balanceo (when taquero needs to rest)
 // SUN
 //   Doc and extras
