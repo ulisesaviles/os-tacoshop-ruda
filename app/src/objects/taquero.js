@@ -55,7 +55,7 @@ const Taquero = (
   };
 
   const log = (message) => {
-    logsHandler.log(`Taquero de ${name}:`, message);
+    logsHandler.log(`Taquero ${name}:`, message);
   };
 
   const putFillings = async (part) => {

@@ -40,9 +40,9 @@ const App = () => {
   // Taqueros/orders-related
   const taqueroTypes = [
     { name: "tripa y cabeza", canWorkOn: ["tripa", "cabeza"] },
-    { name: "asada y suadero 1", canWorkOn: ["asada", "suadero"] },
-    { name: "asada y suadero 2", canWorkOn: ["asada", "suadero"] },
-    { name: "adobada", canWorkOn: ["adobada"] },
+    { name: "cabeza y asada", canWorkOn: ["cabeza", "asada"] },
+    { name: "asada y suadero", canWorkOn: ["asada", "suadero"] },
+    { name: "suadero y adobada", canWorkOn: ["suadero", "adobada"] },
   ];
   const getDefaultQueuesFor = (types) => {
     let orders = {};

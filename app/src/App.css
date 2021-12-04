@@ -104,7 +104,7 @@ body {
   overflow-y: scroll;
 }
 .contentLeftContainer{
-  width: 70vw;
+  width: 75vw;
   max-height: 90vh;
   overflow-y: scroll;
   padding-bottom: 5vh;
@@ -121,7 +121,7 @@ body {
   font-weight: 700;
 }
 .taqueroContainer {
-  max-width: calc(70vw / 6);
+  max-width: calc(75vw / 6);
 }
 .taqueroName {
   font-size: 18px;
@@ -172,7 +172,7 @@ body {
   border-radius: var(--containerBorderRadius);
   box-shadow: var(--shadow);
   margin: 20px;
-  width: calc(30vw - 80px);
+  width: calc(25vw - 80px);
   max-height: calc(90vh - 60px);
   min-height: calc(90vh - 60px);
   padding: 10px 20px;
