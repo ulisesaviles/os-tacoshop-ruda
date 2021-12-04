@@ -10,15 +10,18 @@ const Table = (props) => {
     <div className="table">
       <div className="tableRow">
         {headers.map((header) => (
-          <div className="cell cellHeader">
+          <div className="cell cellHeader" key={header}>
             <p className="cellText cellTextHeader">{header}</p>
           </div>
         ))}
       </div>
       {data.map((row) => (
-        <div className="tableRow">
+        <div className="tableRow" key={`${JSON.stringify(row)}`}>
           {headers.map((header) => (
-            <div className={`cell cell${data.indexOf(row) % 2}`}>
+            <div
+              className={`cell cell${data.indexOf(row) % 2}`}
+              key={`${header}_${row[header]}`}
+            >
               <p className="cellText">{row[header]}</p>
             </div>
           ))}
