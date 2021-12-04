@@ -63,6 +63,7 @@ const Taquero = (
   };
 
   const reAllocateOrder = async (order) => {
+    log(`I'll give order ${order.request_id} to allocation handler`);
     const orders = JSON.parse(localStorage.getItem("ordersToReAllocate"));
     localStorage.setItem(
       "ordersToReAllocate",
@@ -101,6 +102,7 @@ const Taquero = (
       (part.type === "quesadilla" && getQuesadillasInStock() === 0)
     ) {
       reAllocateOrder(queue.shift());
+      ordersHandler.setOrders(queue);
       await rest1Second();
       return;
     }
@@ -120,10 +122,11 @@ const Taquero = (
           part.status = "open";
           break;
         }
+      } else {
+        // Taco time
+        metadataHandler.useTortilla();
+        await timeout(1000);
       }
-      // Taco time
-      metadataHandler.useTortilla();
-      await timeout(1000);
       // Put fllings
       await putFillings(part);
       // Sum
