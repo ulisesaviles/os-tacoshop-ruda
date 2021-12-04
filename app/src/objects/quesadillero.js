@@ -1,7 +1,7 @@
 // Handlers
 import MetadataHandler from "../config/metadataHandler";
 
-const Quesadillero = (setMetadataFunction, taqueros) => {
+const Quesadillero = (setMetadataFunction, taqueros, maxTortillas) => {
   // Handlers and helpers inicialization
   const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const metadataHandler = MetadataHandler(setMetadataFunction, "quesadillero");
@@ -9,6 +9,11 @@ const Quesadillero = (setMetadataFunction, taqueros) => {
 
   const getReadyQuesadillas = () => {
     return metadataHandler.getMetadata()["quesadillero"].quesadillasReady;
+  };
+
+  const getTortillas = async () => {
+    await timeout(10_000);
+    metadataHandler.setMetadata("tortillas", maxTortillas);
   };
 
   const saveQuesadilla = () => {
@@ -19,16 +24,21 @@ const Quesadillero = (setMetadataFunction, taqueros) => {
     watchForSpaceToPutQuesadillas();
     while (true) {
       if (!JSON.parse(localStorage.getItem("RUDAIsWorking"))) break;
+      // Get tortillas if needed
+      let currentTortillas =
+        metadataHandler.getMetadata()["quesadillero"].tortillas;
+      if (currentTortillas === 0) {
+        await getTortillas();
+        currentTortillas =
+          metadataHandler.getMetadata()["quesadillero"].tortillas;
+      }
       // Use Tortillas
-      metadataHandler.setMetadata(
-        "tortillas",
-        metadataHandler.getMetadata()["quesadillero"].tortillas - 1
-      );
+      metadataHandler.setMetadata("tortillas", currentTortillas - 1);
       // Rest
       let rest = metadataHandler.getMetadata()["quesadillero"].rest;
       rest.untilNeeded -= 1;
       metadataHandler.setMetadata("rest", rest);
-      await timeout(5000); // Fucking long time to make a tortilla with cheese
+      await timeout(20_000); // Fucking long time to make a tortilla with cheese
       let min = {
         index: null,
         quantity: 6,
