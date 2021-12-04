@@ -3,7 +3,16 @@
     "datetime": "2021-09-14 16:15:55.421215",
     "request_id": 0,
     "status": "open",
-    "orden": []
+    "orden": [
+      {
+        "part_id": "0-0",
+        "type": "taco",
+        "meat": "cabeza",
+        "status": "open",
+        "quantity": 299,
+        "ingredients": ["guacamole", "cebolla", "cilantro", "salsa"]
+      }
+    ]
   },
   {
     "datetime": "2021-09-14 16:15:55.421246",
@@ -13,12 +22,10 @@
       {
         "part_id": "1-0",
         "type": "taco",
-        "meat": "suadero",
+        "meat": "cabeza",
         "status": "open",
-        "quantity": 2,
-        "finished_products": 0,
-        "delay_counter": 0,
-        "ingredients": ["salsa", "cilantro", "cebolla"]
+        "quantity": 299,
+        "ingredients": ["guacamole"]
       }
     ]
   },
