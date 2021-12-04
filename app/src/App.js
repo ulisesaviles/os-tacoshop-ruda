@@ -12,12 +12,13 @@ import Quesadillero from "./objects/quesadillero";
 import LogsHandler from "./config/logsHandler";
 import AllocationHandler from "./config/allocationAndBalancing";
 import OrdersHandler from "./config/ordersStateHandler";
+import ChalanesHandler from "./config/chalanesHandler";
 
 // Components
 import Table from "./components/table";
 
 // Sample input
-import sampleInput from "./samples/ordenes.json";
+import sampleInput from "./samples/miniOrdenes.json";
 
 const App = () => {
   // Config constants
@@ -39,10 +40,18 @@ const App = () => {
   const logsHandler = LogsHandler(setLogs);
   // Taqueros/orders-related
   const taqueroTypes = [
-    { name: "tripa y cabeza", canWorkOn: ["tripa", "cabeza"] },
-    { name: "cabeza y asada", canWorkOn: ["cabeza", "asada"] },
-    { name: "asada y suadero", canWorkOn: ["asada", "suadero"] },
-    { name: "suadero y adobada", canWorkOn: ["suadero", "adobada"] },
+    { name: "tripa y cabeza", canWorkOn: ["tripa", "cabeza"], chalan: "AMLO" },
+    { name: "cabeza y asada", canWorkOn: ["cabeza", "asada"], chalan: "AMLO" },
+    {
+      name: "asada y suadero",
+      canWorkOn: ["asada", "suadero"],
+      chalan: "Marina",
+    },
+    {
+      name: "suadero y adobada",
+      canWorkOn: ["suadero", "adobada"],
+      chalan: "Marina",
+    },
   ];
   const getDefaultQueuesFor = (types) => {
     let orders = {};
@@ -92,22 +101,34 @@ const App = () => {
     let metadata = {};
     for (let i = 0; i < types.length; i++) {
       const type = types[i];
-      metadata[type.name] = defaultTaqueroMetadata;
+      metadata[type.name] = { ...defaultTaqueroMetadata, chalan: type.chalan };
     }
     metadata["quesadillero"] = defaultQuesadilleroMetadata;
     return metadata;
   };
   const [metadata, setMetadata] = useState(getDefaultMetadataFor(taqueroTypes));
   const taqueros = taqueroTypes.map((type) =>
-    Taquero(type.name, type.canWorkOn, setOrders, setMetadata, logsHandler)
+    Taquero(
+      type.name,
+      type.canWorkOn,
+      setOrders,
+      setMetadata,
+      logsHandler,
+      config.fillingsTop
+    )
   );
-  const quesadillero = Quesadillero(setMetadata, taqueros);
+  const quesadillero = Quesadillero(
+    setMetadata,
+    taqueros,
+    config.fillingsTop.tortillas
+  );
   const allocationBalanceHandler = AllocationHandler(
     taqueros,
     taqueroTypes,
     logsHandler,
     setOrders
   );
+  const chalanesHandler = ChalanesHandler(taqueroTypes, taqueros, logsHandler);
 
   // Functions
   const capitalize = (str = "") => {
@@ -117,6 +138,12 @@ const App = () => {
   const cleanLogs = () => {
     localStorage.setItem("logs", JSON.stringify([]));
     setLogs([]);
+  };
+
+  const cleanRUDA = () => {
+    cleanLogs();
+    restartMetadata();
+    restartOrders();
   };
 
   const formatOrderForTable = (order_) => {
@@ -185,10 +212,11 @@ const App = () => {
   const startRUDA = async () => {
     if (isRunning) return;
     setIsRunning(true);
-    cleanLogs();
-    restartMetadata();
-    restartOrders();
+    cleanRUDA();
     localStorage.setItem("RUDAIsWorking", JSON.stringify(true));
+
+    // Start chalanes
+    chalanesHandler.start();
 
     // Start Allocation and balance handler
     allocationBalanceHandler.start(sampleInput);
@@ -280,7 +308,9 @@ const App = () => {
                     </div>
                     <div className="taqueroMetadataRowContainer">
                       <h6 className="taqueroMetadataRowTitle">Chalán:</h6>
-                      <p className="actualMetadata">X</p>
+                      <p className="actualMetadata">
+                        {metadata[taqueroType.name].chalan}
+                      </p>
                     </div>
                     <div className="taqueroMetadataRowContainer">
                       <h6 className="taqueroMetadataRowTitle">Time rested:</h6>
@@ -395,7 +425,10 @@ const App = () => {
           <p className="logsSubtitle">(De más nuevo a más viejo)</p>
           <div className="logsContentContainer">
             {logs.map((log) => (
-              <div className="logContainer">
+              <div
+                className="logContainer"
+                key={`${log.time}_${log.title}_${log.message}`}
+              >
                 <div className="logHeaderContainer">
                   <h5 className="logTitle">{log.title}</h5>
                   <p className="logTime">{formatTimeForLogs(log.time)}</p>
@@ -414,7 +447,6 @@ export default App;
 
 // TO-DO'S
 // FRI
-//   Chalanes
 //   Rest
 //   Scheduler
 // SAT
