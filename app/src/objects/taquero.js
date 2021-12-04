@@ -8,7 +8,8 @@ const Taquero = (
   canWorkOn,
   ordersSetter,
   setMetadataFunction,
-  logsHandler
+  logsHandler,
+  fillingsTop
 ) => {
   // Handlers and helpers inicialization
   const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -19,6 +20,42 @@ const Taquero = (
   let queue = [];
 
   // Functions
+  const fillFilling = async (filling) => {
+    if (!fillingNeedsToBeFilled(filling)) {
+      console.log(`${name}'s ${filling} is full`);
+      await timeout(100);
+      return;
+    }
+    const times = {
+      guacamole: 25,
+      salsa: 15,
+      cilantro: 10,
+      cebolla: 10,
+      tortillas: 10,
+    };
+    if (filling !== "tortillas") {
+      let newFillings = metadataHandler.getMetadata()[name].fillings;
+      newFillings[filling] = fillingsTop[filling];
+      await timeout(times[filling] * 1000);
+      metadataHandler.setMetadata("fillings", newFillings);
+    } else {
+      await timeout(times.tortillas * 1000);
+      metadataHandler.setMetadata("tortillas", fillingsTop.tortillas);
+    }
+    return true;
+  };
+
+  const fillingNeedsToBeFilled = (filling) => {
+    if (filling !== "tortillas")
+      return (
+        metadataHandler.getMetadata()[name].fillings[filling] <
+        fillingsTop[filling]
+      );
+    return (
+      metadataHandler.getMetadata()[name].tortillas < fillingsTop.tortillas
+    );
+  };
+
   const getOrders = () => {
     return ordersHandler.getAllOrders()[name];
   };
@@ -44,6 +81,15 @@ const Taquero = (
   const giveQuesadilla = () => {
     const newStock = metadataHandler.getMetadata()[name].quesadillasInStock + 1;
     metadataHandler.setMetadata("quesadillasInStock", newStock);
+  };
+
+  const hasEnoughFillings = (ingredients) => {
+    const fillings = metadataHandler.getMetadata()[name].fillings;
+    for (let i = 0; i < ingredients.length; i++) {
+      const ingredient = ingredients[i];
+      if (fillings[ingredient] === 0) return false;
+    }
+    return true;
   };
 
   const insertToQueue = (newElements) => {
@@ -122,6 +168,10 @@ const Taquero = (
           part.status = "open";
           break;
         }
+      } else if (!hasEnoughFillings(part.ingredients)) {
+        log(`I have not enought fillings to continue`);
+        part.status = "open";
+        break;
       } else {
         // Taco time
         metadataHandler.useTortilla();
@@ -163,6 +213,7 @@ const Taquero = (
     getQuesadillasInStock,
     giveQuesadilla,
     restart,
+    fillFilling,
   };
 };
 
