@@ -1,4 +1,4 @@
-const Handler = (setOrdersFunction, taqueroType) => {
+const Handler = (setOrdersFunction, taqueroType, defaultQueues) => {
   const getOrders = () => {
     const orders = localStorage.getItem("orders");
     return JSON.parse(orders);
@@ -11,6 +11,11 @@ const Handler = (setOrdersFunction, taqueroType) => {
     localStorage.setItem("orders", JSON.stringify(generalOrders));
   };
 
+  const restartRUDA = () => {
+    setOrdersFunction(defaultQueues);
+    localStorage.setItem("orders", JSON.stringify(defaultQueues));
+  };
+
   const setOrders = (orders) => {
     let generalOrders = getOrders();
     generalOrders[taqueroType] = orders;
@@ -18,7 +23,7 @@ const Handler = (setOrdersFunction, taqueroType) => {
     localStorage.setItem("orders", JSON.stringify(generalOrders));
   };
 
-  return { getAllOrders: getOrders, setOrders, pushOrder };
+  return { getAllOrders: getOrders, setOrders, pushOrder, restartRUDA };
 };
 
 export default Handler;

@@ -70,6 +70,10 @@ const Taquero = (
     );
   };
 
+  const restart = () => {
+    ordersHandler.setOrders([]);
+  };
+
   const rest1Second = async () => {
     await timeout(1000);
     let meta = metadataHandler.getMetadata()[name];
@@ -155,6 +159,7 @@ const Taquero = (
     canWorkOn,
     getQuesadillasInStock,
     giveQuesadilla,
+    restart,
   };
 };
 
