@@ -56,6 +56,12 @@ const Taquero = (
     );
   };
 
+  const getNextOrderAndPartIndex = (queue) => {
+    const orderIndex = 0;
+    getPartToParticipate(queue[orderIndex].orden);
+    return [orderIndex, getPartToParticipate(queue[orderIndex].orden)];
+  };
+
   const getOrders = () => {
     return ordersHandler.getAllOrders()[name];
   };
@@ -72,10 +78,10 @@ const Taquero = (
         part.status !== "done" &&
         (part.type !== "quesadilla" || getQuesadillasInStock() >= 1)
       ) {
-        return [part, i];
+        return i;
       }
     }
-    return [null, null];
+    return null;
   };
 
   const getTortillas = () => {
@@ -143,10 +149,11 @@ const Taquero = (
   const workOnNextOrder = async () => {
     // Get orders
     queue = getOrders();
-    // Make the first one's corresponding parts
-    const order = queue[0];
-    // Get a part to participate in
-    let [part, partIndex] = getPartToParticipate(order.orden);
+    // Get an order and a part to participate in
+    const [orderIndex, partIndex] = getNextOrderAndPartIndex(queue);
+    const order = queue[orderIndex];
+    let part = queue[orderIndex].orden[partIndex];
+
     if (
       part === null ||
       (part.type === "quesadilla" && getQuesadillasInStock() === 0)
@@ -158,55 +165,58 @@ const Taquero = (
     }
     const start = Date.now();
     // Start working on it
-    queue[0].status = "working";
+    queue[orderIndex].status = "working";
     ordersHandler.setOrders(queue);
     part.status = "working";
     metadataHandler.setMetadata("workingOn", part.part_id);
     // Make the tacos
     let quantity = 0;
     for (let i = 0; part.quantity > part.finished_products; i++) {
+      // Validations:
       // Has not anought fillings
       if (!hasEnoughFillings(part.ingredients)) {
         log(`I have not enought fillings to continue`);
         part.status = "open";
         break;
       }
+      // If quesadillas are not enough
+      if (part.type === "quesadilla" && getQuesadillasInStock() <= 0) {
+        part.status = "open";
+        break;
+      }
 
-      // If quesdilla, use 1
+      // If quesdilla, use a quesadilla
       if (part.type === "quesadilla") {
-        if (getQuesadillasInStock() > 0) {
-          const newStock =
-            metadataHandler.getMetadata()[name].quesadillasInStock - 1;
-          metadataHandler.setMetadata("quesadillasInStock", newStock);
-        } else {
-          part.status = "open";
-          break;
-        }
+        const newStock =
+          metadataHandler.getMetadata()[name].quesadillasInStock - 1;
+        metadataHandler.setMetadata("quesadillasInStock", newStock);
       } else if (part.type !== "quesadilla") {
-        // Taco time
+        // If taco, use a tortilla
         metadataHandler.useTortilla();
         await timeout(1000);
       }
+
       // Put fllings
       await putFillings(part);
+
       // Sum
       part.finished_products += 1;
       if (part.quantity === part.finished_products) part.status = "done";
       quantity++;
     }
-    part.status = part.status === "done" ? part.status : "open";
     // Set it
-    queue[0].orden[partIndex] = part;
-    queue[0].response.push({
+    queue[orderIndex].orden[partIndex] = part;
+    queue[orderIndex].response.push({
       who: `Taquero de ${name}`,
       when: new Date().toISOString(),
       what: `Made ${quantity} ${part.meat} ${part.type} (part ${part.part_id})`,
       time: Date.now() - start,
     });
-    queue[0].status = "open";
+    queue[orderIndex].status = "open";
+    metadataHandler.madeTacos(quantity);
+    // Re-allocate it
     reAllocateOrder(queue.shift());
     ordersHandler.setOrders(queue);
-    metadataHandler.madeTacos(quantity);
     // Log it
     log(`Finished part "${part.part_id}" ${queue.length} left`);
     // Return it
