@@ -446,10 +446,9 @@ const App = () => {
 export default App;
 
 // TO-DO'S
-// FRI
+// SAT
 //   Rest
 //   Scheduler
-// SAT
 //   Balanceo (when taquero needs to rest)
 // SUN
 //   Doc and extras
