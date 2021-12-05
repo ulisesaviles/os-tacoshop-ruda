@@ -18,7 +18,7 @@ import ChalanesHandler from "./config/chalanesHandler";
 import Table from "./components/table";
 
 // Sample input
-import sampleInput from "./samples/ordenes.json";
+import sampleInput from "./samples/miniOrdenes.json";
 
 const App = () => {
   // Config constants
@@ -75,6 +75,7 @@ const App = () => {
     rest: {
       untilNeeded: 1000,
       timeRested: 0,
+      resting: false,
     },
     tortillas: config.fillingsTop.tortillas,
     quesadillasInStock: 0,
@@ -89,10 +90,6 @@ const App = () => {
     fan: {
       active: true,
       untilNeeded: 0,
-    },
-    rest: {
-      untilNeeded: 1000,
-      timeRested: 0,
     },
     tortillas: 50,
     quesadillasReady: 0,
@@ -313,6 +310,14 @@ const App = () => {
                       </p>
                     </div>
                     <div className="taqueroMetadataRowContainer">
+                      <h6 className="taqueroMetadataRowTitle">Resting:</h6>
+                      <p className="actualMetadata">
+                        {JSON.stringify(
+                          metadata[taqueroType.name].rest.resting
+                        )}
+                      </p>
+                    </div>
+                    <div className="taqueroMetadataRowContainer">
                       <h6 className="taqueroMetadataRowTitle">Time rested:</h6>
                       <p className="actualMetadata">
                         {metadata[taqueroType.name].rest.timeRested}
@@ -389,20 +394,6 @@ const App = () => {
                   </p>
                 </div>
                 <div className="taqueroMetadataRowContainer">
-                  <h6 className="taqueroMetadataRowTitle">Time rested:</h6>
-                  <p className="actualMetadata">
-                    {metadata.quesadillero.rest.timeRested}
-                  </p>
-                </div>
-                <div className="taqueroMetadataRowContainer">
-                  <h6 className="taqueroMetadataRowTitle">
-                    Quesadillas untill rest:
-                  </h6>
-                  <p className="actualMetadata">
-                    {metadata.quesadillero.rest.untilNeeded}
-                  </p>
-                </div>
-                <div className="taqueroMetadataRowContainer">
                   <h6 className="taqueroMetadataRowTitle">Tortillas</h6>
                   <p className="actualMetadata">
                     {metadata.quesadillero.tortillas}
@@ -456,4 +447,5 @@ export default App;
 //   Scheduler
 //   Balanceo (when taquero needs to rest)
 // SUN
+//   If is resting, request orders
 //   Doc and extras
