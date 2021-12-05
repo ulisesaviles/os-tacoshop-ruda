@@ -34,10 +34,6 @@ const Quesadillero = (setMetadataFunction, taqueros, maxTortillas) => {
       }
       // Use Tortillas
       metadataHandler.setMetadata("tortillas", currentTortillas - 1);
-      // Rest
-      let rest = metadataHandler.getMetadata()["quesadillero"].rest;
-      rest.untilNeeded -= 1;
-      metadataHandler.setMetadata("rest", rest);
       await timeout(20_000); // Fucking long time to make a tortilla with cheese
       let min = {
         index: null,
