@@ -18,7 +18,7 @@ import ChalanesHandler from "./config/chalanesHandler";
 import Table from "./components/table";
 
 // Sample input
-import sampleInput from "./samples/miniOrdenes.json";
+import sampleInput from "./samples/ordenes.json";
 
 const App = () => {
   // Config constants
@@ -368,6 +368,7 @@ const App = () => {
                 </div>
               );
             })}
+
             {/* Quesadillero */}
             <div className="taqueroContainer">
               <h4 className="taqueroName">Quesadillero</h4>
@@ -410,6 +411,8 @@ const App = () => {
               </div>
             </div>
           </div>
+
+          {/* Orders */}
           <h2 className="orders">Orders</h2>
           <div className="ordersContainer">
             {Object.keys(orders).map((key) => (
@@ -420,22 +423,24 @@ const App = () => {
             ))}
           </div>
         </div>
+
+        {/* Logs */}
         <div className="logsContainer">
           <h2 className="logsTitle">Logs:</h2>
           <p className="logsSubtitle">(De más nuevo a más viejo)</p>
           <div className="logsContentContainer">
-            {logs.map((log) => (
-              <div
-                className="logContainer"
-                key={`${log.time}_${log.title}_${log.message}`}
-              >
-                <div className="logHeaderContainer">
-                  <h5 className="logTitle">{log.title}</h5>
-                  <p className="logTime">{formatTimeForLogs(log.time)}</p>
+            {logs.map((log) => {
+              const index = logs.indexOf(log);
+              return (
+                <div className="logContainer" key={index}>
+                  <div className="logHeaderContainer">
+                    <h5 className="logTitle">{log.title}</h5>
+                    <p className="logTime">{formatTimeForLogs(log.time)}</p>
+                  </div>
+                  {log.message}
                 </div>
-                {log.message}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

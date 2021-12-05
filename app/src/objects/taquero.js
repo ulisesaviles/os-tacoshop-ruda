@@ -22,7 +22,6 @@ const Taquero = (
   // Functions
   const fillFilling = async (filling) => {
     if (!fillingNeedsToBeFilled(filling)) {
-      console.log(`${name}'s ${filling} is full`);
       await timeout(100);
       return;
     }
@@ -58,7 +57,6 @@ const Taquero = (
 
   const getNextOrderAndPartIndex = (queue) => {
     const orderIndex = 0;
-    getPartToParticipate(queue[orderIndex].orden);
     return [orderIndex, getPartToParticipate(queue[orderIndex].orden)];
   };
 
@@ -151,11 +149,11 @@ const Taquero = (
     queue = getOrders();
     // Get an order and a part to participate in
     const [orderIndex, partIndex] = getNextOrderAndPartIndex(queue);
-    const order = queue[orderIndex];
     let part = queue[orderIndex].orden[partIndex];
 
+    // If not enough quesadillas, rest 1 sec to avoid infinite loop
     if (
-      part === null ||
+      partIndex === null || // Cannot currently work on it (fillings, quesadillas, etc)
       (part.type === "quesadilla" && getQuesadillasInStock() === 0)
     ) {
       reAllocateOrder(queue.shift());
@@ -164,6 +162,7 @@ const Taquero = (
       return;
     }
     const start = Date.now();
+
     // Start working on it
     queue[orderIndex].status = "working";
     ordersHandler.setOrders(queue);
@@ -204,6 +203,7 @@ const Taquero = (
       if (part.quantity === part.finished_products) part.status = "done";
       quantity++;
     }
+
     // Set it
     queue[orderIndex].orden[partIndex] = part;
     queue[orderIndex].response.push({
@@ -214,11 +214,14 @@ const Taquero = (
     });
     queue[orderIndex].status = "open";
     metadataHandler.madeTacos(quantity);
+
     // Re-allocate it
     reAllocateOrder(queue.shift());
     ordersHandler.setOrders(queue);
+
     // Log it
     log(`Finished part "${part.part_id}" ${queue.length} left`);
+
     // Return it
     return queue.length;
   };
