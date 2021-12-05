@@ -239,6 +239,7 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
       if (part.status === "done") continue;
       if (part.type === "quesadilla" && taquero.getQuesadillasInStock() === 0)
         continue;
+      if (taquero.isResting()) continue;
       if (taquero.canWorkOn.includes(part.meat)) return true;
     }
   };
