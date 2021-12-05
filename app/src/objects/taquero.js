@@ -86,6 +86,15 @@ const Taquero = (
     return metadataHandler.getMetadata()[name].tortillas;
   };
 
+  const giveOrdersAway = () => {
+    const orders = getOrders();
+    for (let i = 0; i < orders.length; i++) {
+      const order = orders[i];
+      reAllocateOrder(order);
+    }
+    ordersHandler.setOrders([]);
+  };
+
   const giveQuesadilla = () => {
     const newStock = metadataHandler.getMetadata()[name].quesadillasInStock + 1;
     metadataHandler.setMetadata("quesadillasInStock", newStock);
@@ -108,8 +117,22 @@ const Taquero = (
     return queue;
   };
 
+  const isResting = () => {
+    return metadataHandler.getMetadata()[name].rest.resting;
+  };
+
   const log = (message) => {
     logsHandler.log(`Taquero ${name}:`, message);
+  };
+
+  const needsToRest = () => {
+    return metadataHandler.getMetadata()[name].rest.untilNeeded === 0;
+  };
+
+  const notifyResting = () => {
+    let rest = metadataHandler.getMetadata()[name].rest;
+    rest.resting = true;
+    metadataHandler.setMetadata("rest", rest);
   };
 
   const putFillings = async (part) => {
@@ -123,6 +146,19 @@ const Taquero = (
       "ordersToReAllocate",
       JSON.stringify([...orders, order])
     );
+  };
+
+  const rest = async () => {
+    const timeToRest = 60 - metadataHandler.getMetadata()[name].rest.timeRested;
+    if (timeToRest > 0) {
+      log(`I'll rest ${timeToRest} secs`);
+      await timeout(timeToRest * 1000);
+    }
+    metadataHandler.setMetadata("rest", {
+      untilNeeded: 1000,
+      timeRested: 0,
+      resting: false,
+    });
   };
 
   const restart = () => {
@@ -171,6 +207,14 @@ const Taquero = (
     // Make the tacos
     let quantity = 0;
     for (let i = 0; part.quantity > part.finished_products; i++) {
+      // If needs to rest, rest and give away all orders
+      if (needsToRest()) {
+        notifyResting();
+        giveOrdersAway();
+        await rest();
+        return;
+      }
+
       // Validations:
       // Has not anought fillings
       if (!hasEnoughFillings(part.ingredients)) {
@@ -198,7 +242,8 @@ const Taquero = (
       // Put fllings
       await putFillings(part);
 
-      // Sum
+      // Updates
+      metadataHandler.madeTaco();
       part.finished_products += 1;
       if (part.quantity === part.finished_products) part.status = "done";
       quantity++;
@@ -213,7 +258,7 @@ const Taquero = (
       time: Date.now() - start,
     });
     queue[orderIndex].status = "open";
-    metadataHandler.madeTacos(quantity);
+    metadataHandler.madePart();
 
     // Re-allocate it
     reAllocateOrder(queue.shift());
@@ -240,6 +285,7 @@ const Taquero = (
     restart,
     fillFilling,
     getTortillas,
+    isResting,
   };
 };
 
