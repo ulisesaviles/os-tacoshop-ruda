@@ -166,16 +166,23 @@ const Taquero = (
   };
 
   const rest1Second = async () => {
-    await timeout(1000);
     let meta = metadataHandler.getMetadata()[name];
+    meta.rest.tempResting = true;
+    metadataHandler.setMetadata("rest", meta.rest);
+
+    await timeout(1000);
+
+    meta = metadataHandler.getMetadata()[name];
     meta.rest.timeRested++;
+    meta.rest.tempResting = false;
     metadataHandler.setMetadata("rest", meta.rest);
   };
 
   const startWorking = async () => {
     while (true) {
-      if (getOrders().length === 0) await rest1Second();
-      else await workOnNextOrder();
+      if (getOrders().length === 0) {
+        await rest1Second();
+      } else await workOnNextOrder();
       if (!JSON.parse(localStorage.getItem("RUDAIsWorking"))) break;
     }
   };
@@ -265,7 +272,13 @@ const Taquero = (
     ordersHandler.setOrders(queue);
 
     // Log it
-    log(`Finished part "${part.part_id}" ${queue.length} left`);
+    log(
+      `${
+        part.quantity === part.finished_products ? "Finished" : "Putted aside"
+      } part "${part.part_id}" (${part.finished_products}/${part.quantity})  ${
+        queue.length
+      } left in my list`
+    );
 
     // Return it
     return queue.length;
