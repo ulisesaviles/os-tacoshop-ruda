@@ -1,3 +1,15 @@
+// BY:
+//   Ulises Aviles T031438 (gh: ulisesaviles)
+//   David Dennis T026290 (gh: DavidDennisC)
+//   René Núñez T0322277 (gh: ReneN25)
+//   Abner Silva T032069 (gh: Godys05)
+
+// TO Make tests:
+// Uncomment lines 347 AND 348 from allocationAndBallancing.js
+//   (To load data from json to SQS before getting the data)
+// Set quesadilero time to 5000 in line 15 of quesadillero.js
+//   (To run everythung waaaay much faster)
+
 // React imports
 import { useState, useEffect } from "react";
 
@@ -449,8 +461,3 @@ const App = () => {
 };
 
 export default App;
-
-// TO-DO'S
-// SUN
-//   Scheduler
-//   Doc and extras
