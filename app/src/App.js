@@ -73,6 +73,7 @@ const App = () => {
       untilNeeded: 1000,
       timeRested: 0,
       resting: false,
+      tempResting: false,
     },
     tortillas: config.fillingsTop.tortillas,
     quesadillasInStock: 0,
@@ -120,7 +121,8 @@ const App = () => {
     taqueros,
     taqueroTypes,
     logsHandler,
-    setOrders
+    setOrders,
+    setMetadata
   );
   const chalanesHandler = ChalanesHandler(taqueroTypes, taqueros, logsHandler);
 
@@ -138,6 +140,7 @@ const App = () => {
     cleanLogs();
     restartMetadata();
     restartOrders();
+    localStorage.setItem("gotAllOrders", JSON.stringify(false));
   };
 
   const formatOrderForTable = (order_) => {
@@ -237,6 +240,7 @@ const App = () => {
     }
     setIsRunning(false);
     logsHandler.log("RUDA is done😎");
+    console.log(OrdersHandler().getAllOrders().done);
   };
 
   const timeout = (ms) => {
@@ -283,7 +287,7 @@ const App = () => {
                     <h3 className="metadata">Metadata</h3>
                     <div className="taqueroMetadataRowContainer">
                       <h6 className="taqueroMetadataRowTitle">
-                        Orders in queue:
+                        Orders in list:
                       </h6>
                       <p className="actualMetadata">
                         {metadata[taqueroType.name].queueLength}
@@ -313,7 +317,8 @@ const App = () => {
                       <h6 className="taqueroMetadataRowTitle">Resting:</h6>
                       <p className="actualMetadata">
                         {JSON.stringify(
-                          metadata[taqueroType.name].rest.resting
+                          metadata[taqueroType.name].rest.resting ||
+                            metadata[taqueroType.name].rest.tempResting
                         )}
                       </p>
                     </div>
@@ -444,6 +449,4 @@ export default App;
 // TO-DO'S
 // SUN
 //   Scheduler
-//   Balanceo (when taquero needs to rest)
-//   If is resting, request orders
 //   Doc and extras
