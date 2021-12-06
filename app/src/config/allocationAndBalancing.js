@@ -1,8 +1,56 @@
 // Handlers
 import OrdersHandler from "../config/ordersStateHandler";
 
+// AWS
+import AWS from "aws-sdk";
+
+// Sample input
+import sampleInput from "../samples/miniOrdenes.json";
+
 const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
   const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  // AWS
+  const checkAWSCredentials = () => {
+    let awsConfig = localStorage.getItem("awsConfig");
+    if (!awsConfig) {
+      awsConfig = {};
+      awsConfig.accessKeyId = window.prompt(
+        "Ingresa el accessKeyId del equipo 9: "
+      );
+      awsConfig.secretAccessKey = window.prompt(
+        "Ingresa el secretAccessKey del equipo 9: "
+      );
+      awsConfig.region = "us-east-1";
+      localStorage.setItem("awsConfig", JSON.stringify(awsConfig));
+    } else {
+      awsConfig = JSON.parse(awsConfig);
+      if (
+        awsConfig.accessKeyId === null ||
+        awsConfig.secretAccessKey === null
+      ) {
+        awsConfig = {};
+        awsConfig.accessKeyId = window.prompt(
+          "Ingresa el accessKeyId del equipo 9: "
+        );
+        awsConfig.secretAccessKey = window.prompt(
+          "Ingresa el secretAccessKey del equipo 9: "
+        );
+        awsConfig.region = "us-east-1";
+        localStorage.setItem("awsConfig", JSON.stringify(awsConfig));
+      }
+      // else console.log("FOUND CREDENTIALS: ", awsConfig);
+    }
+    AWS.config.update({ ...awsConfig, region: "us-east-1" });
+  };
+  let checked = false;
+  if (!checked) {
+    checked = true;
+    checkAWSCredentials();
+  }
+  const sqs = new AWS.SQS({ apiVersion: "2012-11-05" });
+  const QueueUrl =
+    "https://sqs.us-east-1.amazonaws.com/292274580527/sqs_cc106_team_9";
 
   const getValidMeatTipesForTaqueros = (taqueroTypes) => {
     let res = [];
@@ -48,10 +96,7 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
     }
     if (min.name !== null) {
       insertTaquero(min.taqueroIndex, [order]);
-      logsHandler.log(
-        "Allocation and balancing:",
-        `Asigned order ${order.request_id} to ${min.name}`
-      );
+      log(`Asigned order ${order.request_id} to ${min.name}`);
       return true;
     } else if (orderIsComplete(order)) {
       completeOrder({ ...order });
@@ -69,23 +114,38 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
   const completeOrder = (order) => {
     order.status = "done";
     handlers.done.pushOrder(order);
-    logsHandler.log(
-      "Allocation and balancing:",
-      `Order ${order.request_id} is done.`
-    );
+    log(`Order ${order.request_id} is done.`);
+  };
+
+  const deleteMessage = async (ReceiptHandle) => {
+    return new Promise((resolve) => {
+      sqs.deleteMessage(
+        {
+          QueueUrl,
+          ReceiptHandle,
+        },
+        () => resolve()
+      );
+    });
   };
 
   const handleEmptyOrder = (order) => {
     order.status = "done";
     handlers.done.pushOrder(order);
-    logsHandler.log(
-      "Allocation and balancing:",
-      `Order ${order.request_id} was empty, so its done.`
-    );
+    log(`Order ${order.request_id} was empty, so its done.`);
   };
 
   const insertTaquero = (taqueroIndex, orders) => {
     taqueros[taqueroIndex].insertToQueue(orders);
+  };
+
+  const fillQueue = async (input) => {
+    for (let i = 0; i < input.length; i++) {
+      const order = input[i];
+      await sendMessage(order);
+      console.log(`Sent order: ${JSON.stringify(order)}`);
+    }
+    console.log("FILL DONE");
   };
 
   const filteredOrder = (order) => {
@@ -194,6 +254,10 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
     }
   };
 
+  const log = (message) => {
+    logsHandler.log("Allocation and balancing:", message);
+  };
+
   const orderIsComplete = (order) => {
     for (let i = 0; i < order.orden.length; i++) {
       const part = order.orden[i];
@@ -202,9 +266,25 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
     return true;
   };
 
+  const purgeQueue = async () => {
+    return new Promise((resolve) => {
+      sqs.purgeQueue({ QueueUrl }, () => {
+        console.log("PURGE DONE");
+        resolve();
+      });
+    });
+  };
+
+  const receiveMessages = async () => {
+    return new Promise((resolve) => {
+      sqs.receiveMessage({ QueueUrl }, (err, data) => {
+        resolve(data.Messages);
+      });
+    });
+  };
+
   const rejectOrder = (order, reazon) => {
-    logsHandler.log(
-      "Allocation and balancing:",
+    log(
       `Order ${
         order.request_id ? order.request_id : "with unknown id"
       } rejected due to: ${reazon}`
@@ -214,23 +294,68 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
   };
 
   const rejectPart = (partId, reazon) => {
-    logsHandler.log(
-      "Allocation and balancing:",
+    log(
       `Part ${partId ? partId : "with unknown id"} rejected due to: ${reazon}`
     );
   };
 
-  const start = (input) => {
+  const sendMessage = async (order) => {
+    return new Promise((resolve) => {
+      sqs.sendMessage({ MessageBody: JSON.stringify(order), QueueUrl }, () =>
+        resolve()
+      );
+    });
+  };
+
+  const start = async () => {
+    await purgeQueue();
+    await fillQueue(sampleInput);
+
     watchForOrdersToReallocate();
-    for (let i = 0; i < input.length; i++) {
-      const order = filteredOrder(input[i]);
-      if (order.invalid) continue;
-      if (order.orden.length === 0) {
-        handleEmptyOrder({ ...order });
-        continue;
+    do {
+      const messages = await receiveMessages();
+      if (messages.length > 0) {
+        await deleteMessage(messages[0].ReceiptHandle);
+        const order = filteredOrder(JSON.parse(messages[0].Body));
+
+        if (order.invalid) continue;
+        if (order.orden.length === 0) {
+          handleEmptyOrder({ ...order });
+          continue;
+        }
+
+        allocateOrder(order);
+      } else {
+        log("There are no more orders");
+        localStorage.setItem("gotAllOrders", JSON.stringify(true));
+        break;
       }
-      allocateOrder(order);
-    }
+
+      // sqs.receiveMessage({ QueueUrl }, (err, data) => {
+      //   const messages = data.Messages;
+      //   console.log("Cycle");
+      //   if (messages.length > 0) {
+      //     console.log("Got an order!!");
+      //     console.log(messages);
+      //     sqs.deleteMessage({
+      //       QueueUrl,
+      //       ReceiptHandle: messages[0].ReceiptHandle,
+      //     });
+      //     const order = filteredOrder(JSON.parse(messages[0].Body));
+      //     if (order.invalid) return;
+      //     if (order.orden.length === 0) {
+      //       handleEmptyOrder({ ...order });
+      //       return;
+      //     }
+      //     allocateOrder(order);
+      //   } else {
+      //     log("There are no more orders");
+      //     localStorage.setItem("gotAllOrders", JSON.stringify(true));
+      //     stop = true;
+      //     return;
+      //   }
+      // });
+    } while (true);
   };
 
   const taqueroCanWorkOnOrder = (taquero, order) => {
