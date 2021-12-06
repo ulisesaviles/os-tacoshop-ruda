@@ -17,9 +17,6 @@ import ChalanesHandler from "./config/chalanesHandler";
 // Components
 import Table from "./components/table";
 
-// Sample input
-import sampleInput from "./samples/miniOrdenes.json";
-
 const App = () => {
   // Config constants
   const [isRunning, setIsRunning] = useState(false);
@@ -180,6 +177,7 @@ const App = () => {
     }
     if (JSON.parse(localStorage.getItem("ordersToReAllocate")).length > 0)
       return false;
+    if (!JSON.parse(localStorage.getItem("gotAllOrders"))) return false;
     return true;
   };
 
@@ -204,6 +202,7 @@ const App = () => {
       JSON.stringify(getDefaultMetadataFor(taqueroTypes))
     );
     localStorage.setItem("ordersToReAllocate", JSON.stringify([]));
+    localStorage.setItem("gotAllOrders", JSON.stringify(false));
   };
 
   const startRUDA = async () => {
@@ -216,7 +215,7 @@ const App = () => {
     chalanesHandler.start();
 
     // Start Allocation and balance handler
-    allocationBalanceHandler.start(sampleInput);
+    allocationBalanceHandler.start();
 
     // Start every taquero
     for (let i = 0; i < taqueros.length; i++) {
@@ -237,6 +236,7 @@ const App = () => {
       setChrono((counter / 1000).toFixed(1));
     }
     setIsRunning(false);
+    logsHandler.log("RUDA is done😎");
   };
 
   const timeout = (ms) => {
@@ -442,10 +442,8 @@ const App = () => {
 export default App;
 
 // TO-DO'S
-// SAT
-//   Rest
+// SUN
 //   Scheduler
 //   Balanceo (when taquero needs to rest)
-// SUN
 //   If is resting, request orders
 //   Doc and extras
