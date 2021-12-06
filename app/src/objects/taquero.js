@@ -18,6 +18,7 @@ const Taquero = (
 
   // Attributes
   let queue = [];
+  const tacosPerSprint = 10;
 
   // Functions
   const fillFilling = async (filling) => {
@@ -214,6 +215,13 @@ const Taquero = (
     // Make the tacos
     let quantity = 0;
     for (let i = 0; part.quantity > part.finished_products; i++) {
+      if (quantity >= tacosPerSprint) {
+        log(
+          `I have done ${tacosPerSprint} ${part.type}s for part ${part.part_id} `
+        );
+        part.status = "open";
+        break;
+      }
       // If needs to rest, rest and give away all orders
       if (needsToRest()) {
         notifyResting();
@@ -231,6 +239,7 @@ const Taquero = (
       }
       // If quesadillas are not enough
       if (part.type === "quesadilla" && getQuesadillasInStock() <= 0) {
+        log(`I have not enought quesadillas to continue`);
         part.status = "open";
         break;
       }
