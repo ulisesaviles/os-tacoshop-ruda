@@ -158,6 +158,7 @@ const Handler = (
     const invalid = { invalid: true };
     let tacoCounter = 0;
     const tacoMax = 300;
+    const tacoMaxPerPart = 100;
     try {
       if (typeof order.request_id !== "number" || order.request_id < 0) {
         rejectOrder(order, "invalid id");
@@ -196,8 +197,8 @@ const Handler = (
           delete order.orden[i];
           continue;
         }
-        if (part.cuantity > 100) {
-          rejectPart(part.part_id, "has more than 100 products");
+        if (part.cuantity > tacoMaxPerPart) {
+          rejectPart(part.part_id, `has more than ${tacoMaxPerPart} products`);
           aPartIsInvalid = true;
           delete order.orden[i];
           continue;
@@ -282,7 +283,7 @@ const Handler = (
   };
 
   const log = (message) => {
-    logsHandler.log("Allocation and balancing:", message);
+    logsHandler.log("Sistema de asignación:", message);
   };
 
   const orderIsComplete = (order) => {
