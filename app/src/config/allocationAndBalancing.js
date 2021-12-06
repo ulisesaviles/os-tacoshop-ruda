@@ -1,5 +1,6 @@
 // Handlers
 import OrdersHandler from "../config/ordersStateHandler";
+import MetadataHandler from "../config/metadataHandler";
 
 // AWS
 import AWS from "aws-sdk";
@@ -7,8 +8,15 @@ import AWS from "aws-sdk";
 // Sample input
 import sampleInput from "../samples/miniOrdenes.json";
 
-const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
+const Handler = (
+  taqueros,
+  taqueroTypes,
+  logsHandler,
+  setOrdersFunction,
+  setMetadataFunction
+) => {
   const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const metadataHandler = MetadataHandler(setMetadataFunction);
 
   // AWS
   const checkAWSCredentials = () => {
@@ -143,9 +151,7 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
     for (let i = 0; i < input.length; i++) {
       const order = input[i];
       await sendMessage(order);
-      console.log(`Sent order: ${JSON.stringify(order)}`);
     }
-    console.log("FILL DONE");
   };
 
   const filteredOrder = (order) => {
@@ -254,6 +260,27 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
     }
   };
 
+  const giveOrders = async (taqueroName) => {
+    await timeout(1000);
+    // Get all open orders in where taquero can participate
+    let allOrders = handlers.done.getAllOrders();
+    const ordersKeys = Object.keys(allOrders);
+    for (let i = 0; i < ordersKeys.length; i++) {
+      const key = ordersKeys[i];
+      if (["done", "rejected", taqueroName].includes(key)) continue;
+      for (let j = 0; j < allOrders[key].length; j++) {
+        const order = allOrders[key][j];
+        if (taqueroCanWorkOnOrder(taqueroWithName(taqueroName), order)) {
+          // Give him an order
+          handlers[taqueroName].setOrders([order]);
+          allOrders[key].splice(j, 1);
+          handlers[key].setOrders(allOrders[key]);
+          log(`${taqueroName} was unoccupied, so I gave him something to do.`);
+        }
+      }
+    }
+  };
+
   const log = (message) => {
     logsHandler.log("Allocation and balancing:", message);
   };
@@ -269,7 +296,6 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
   const purgeQueue = async () => {
     return new Promise((resolve) => {
       sqs.purgeQueue({ QueueUrl }, () => {
-        console.log("PURGE DONE");
         resolve();
       });
     });
@@ -312,6 +338,7 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
     await fillQueue(sampleInput);
 
     watchForOrdersToReallocate();
+    watchForUnoccupiedTaqueros();
     while (true) {
       const messages = await receiveMessages();
       if (messages.length > 0) {
@@ -334,13 +361,21 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
   };
 
   const taqueroCanWorkOnOrder = (taquero, order) => {
+    if (order.status !== "open") return;
     for (let i = 0; i < order.orden.length; i++) {
       const part = order.orden[i];
-      if (part.status === "done") continue;
+      if (part.status !== "open") continue;
       if (part.type === "quesadilla" && taquero.getQuesadillasInStock() === 0)
         continue;
       if (taquero.isResting()) continue;
       if (taquero.canWorkOn.includes(part.meat)) return true;
+    }
+  };
+
+  const taqueroWithName = (name) => {
+    for (let i = 0; i < taqueros.length; i++) {
+      const taquero = taqueros[i];
+      if (taquero.name === name) return taquero;
     }
   };
 
@@ -355,6 +390,23 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
       }
       localStorage.setItem("ordersToReAllocate", JSON.stringify(ordersLeft));
       await timeout(100);
+    }
+  };
+
+  const watchForUnoccupiedTaqueros = async () => {
+    while (true) {
+      await timeout(1000);
+      // If RUDA is no longer working, break
+      if (!JSON.parse(localStorage.getItem("RUDAIsWorking"))) break;
+      // If we are still receiving orders, continue
+      if (!JSON.parse(localStorage.getItem("gotAllOrders"))) continue;
+
+      // Get unoccupied taqueros and do something about it;
+      const unoccupied = metadataHandler.getUnoccupiedTaqueros();
+      for (let i = 0; i < unoccupied.length; i++) {
+        const taqueroName = unoccupied[i];
+        await giveOrders(taqueroName);
+      }
     }
   };
 
