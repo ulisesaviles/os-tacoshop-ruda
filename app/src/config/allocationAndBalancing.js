@@ -262,7 +262,9 @@ const Handler = (
   };
 
   const giveOrders = async (taqueroName) => {
-    await timeout(1000);
+    // IF no longer unocuppied
+    if (!metadataHandler.getUnoccupiedTaqueros().includes(taqueroName)) return;
+
     // Get all open orders in where taquero can participate
     let allOrders = handlers.done.getAllOrders();
     const ordersKeys = Object.keys(allOrders);
@@ -273,7 +275,14 @@ const Handler = (
         const order = allOrders[key][j];
         if (taqueroCanWorkOnOrder(taqueroWithName(taqueroName), order)) {
           // Give him an order
-          handlers[taqueroName].setOrders([order]);
+          // Catch conflict when order was no longer part of it
+          if (!handlers.done.getAllOrders()[key].includes(order)) {
+            continue;
+          }
+          handlers[taqueroName].setOrders([
+            order,
+            ...handlers.done.getAllOrders()[taqueroName],
+          ]);
           allOrders[key].splice(j, 1);
           handlers[key].setOrders(allOrders[key]);
           log(`${taqueroName} was unoccupied, so I gave him something to do.`);
@@ -335,8 +344,8 @@ const Handler = (
   };
 
   const start = async () => {
-    await purgeQueue();
-    await fillQueue(sampleInput);
+    // await purgeQueue(); // UNCOMMENT FOR DEV TESTS (Purges queue)
+    // await fillQueue(sampleInput); // UNCOMMENT FOR DEV TESTS (Fills queue with orders in JSON)
 
     watchForOrdersToReallocate();
     watchForUnoccupiedTaqueros();
@@ -369,7 +378,9 @@ const Handler = (
       if (part.type === "quesadilla" && taquero.getQuesadillasInStock() === 0)
         continue;
       if (taquero.isResting()) continue;
-      if (taquero.canWorkOn.includes(part.meat)) return true;
+      if (taquero.canWorkOn.includes(part.meat)) {
+        return true;
+      }
     }
   };
 

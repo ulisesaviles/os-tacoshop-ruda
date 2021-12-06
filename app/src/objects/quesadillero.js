@@ -12,7 +12,7 @@ const Quesadillero = (setMetadataFunction, taqueros, maxTortillas) => {
   };
 
   const getTortillas = async () => {
-    await timeout(10_000);
+    await timeout(20_000);
     metadataHandler.setMetadata("tortillas", maxTortillas);
   };
 
