@@ -62,7 +62,7 @@ const Handler = (taqueroTypes, taqueros, logsHandler) => {
         if (await taquero.fillFilling(filling))
           log(chalan.name, taquero.name, filling);
         milisecs += Date.now() - tempTime;
-        if (milisecs > 20_000 || taquero.getTortillas() < 25) {
+        if (milisecs > 25_000 || taquero.getTortillas() < 15) {
           await placeTortillas(chalan);
           milisecs = 0;
         }

@@ -26,11 +26,11 @@ const Taquero = (
       return;
     }
     const times = {
-      guacamole: 25,
+      guacamole: 20,
       salsa: 15,
       cilantro: 10,
       cebolla: 10,
-      tortillas: 10,
+      tortillas: 5,
     };
     if (filling !== "tortillas") {
       let newFillings = metadataHandler.getMetadata()[name].fillings;
