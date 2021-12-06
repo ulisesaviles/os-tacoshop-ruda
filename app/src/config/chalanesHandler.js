@@ -53,8 +53,10 @@ const Handler = (taqueroTypes, taqueros, logsHandler) => {
     let milisecs = 0;
     let tempTime;
     for (let i = 0; i < chalan.servesTaqueros.length; i++) {
+      if (!JSON.parse(localStorage.getItem("RUDAIsWorking"))) break;
       const taquero = taqueroWithName(chalan.servesTaqueros[i]);
       for (let i = 0; i < fillings.length; i++) {
+        if (!JSON.parse(localStorage.getItem("RUDAIsWorking"))) break;
         const filling = fillings[i];
         tempTime = Date.now();
         if (await taquero.fillFilling(filling))
