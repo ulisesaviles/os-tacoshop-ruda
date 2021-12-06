@@ -38,15 +38,19 @@ const App = () => {
   // Taqueros/orders-related
   const taqueroTypes = [
     { name: "tripa y cabeza", canWorkOn: ["tripa", "cabeza"], chalan: "AMLO" },
-    { name: "cabeza y asada", canWorkOn: ["cabeza", "asada"], chalan: "AMLO" },
     {
-      name: "asada y suadero",
+      name: "asada y suadero 1",
+      canWorkOn: ["asada", "suadero"],
+      chalan: "AMLO",
+    },
+    {
+      name: "asada y suadero 2",
       canWorkOn: ["asada", "suadero"],
       chalan: "Marina",
     },
     {
-      name: "suadero y adobada",
-      canWorkOn: ["suadero", "adobada"],
+      name: "adobada",
+      canWorkOn: ["adobada"],
       chalan: "Marina",
     },
   ];
