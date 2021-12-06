@@ -312,7 +312,7 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
     await fillQueue(sampleInput);
 
     watchForOrdersToReallocate();
-    do {
+    while (true) {
       const messages = await receiveMessages();
       if (messages.length > 0) {
         await deleteMessage(messages[0].ReceiptHandle);
@@ -330,32 +330,7 @@ const Handler = (taqueros, taqueroTypes, logsHandler, setOrdersFunction) => {
         localStorage.setItem("gotAllOrders", JSON.stringify(true));
         break;
       }
-
-      // sqs.receiveMessage({ QueueUrl }, (err, data) => {
-      //   const messages = data.Messages;
-      //   console.log("Cycle");
-      //   if (messages.length > 0) {
-      //     console.log("Got an order!!");
-      //     console.log(messages);
-      //     sqs.deleteMessage({
-      //       QueueUrl,
-      //       ReceiptHandle: messages[0].ReceiptHandle,
-      //     });
-      //     const order = filteredOrder(JSON.parse(messages[0].Body));
-      //     if (order.invalid) return;
-      //     if (order.orden.length === 0) {
-      //       handleEmptyOrder({ ...order });
-      //       return;
-      //     }
-      //     allocateOrder(order);
-      //   } else {
-      //     log("There are no more orders");
-      //     localStorage.setItem("gotAllOrders", JSON.stringify(true));
-      //     stop = true;
-      //     return;
-      //   }
-      // });
-    } while (true);
+    }
   };
 
   const taqueroCanWorkOnOrder = (taquero, order) => {
