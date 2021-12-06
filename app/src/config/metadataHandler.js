@@ -16,6 +16,18 @@ const Handler = (setMetadataFunction, taqueroName) => {
     return JSON.parse(metadata);
   };
 
+  const getUnoccupiedTaqueros = () => {
+    let res = [];
+    const metadata = getMetadata();
+    const keys = Object.keys(metadata);
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      if (metadata[key].workingOn === null && !metadata[key].resting)
+        res.push(key);
+    }
+    return res;
+  };
+
   const madePart = () => {
     let metadata = getMetadata();
     // One less order in queue
@@ -58,6 +70,7 @@ const Handler = (setMetadataFunction, taqueroName) => {
     useTortilla,
     madeTaco,
     madePart,
+    getUnoccupiedTaqueros,
   };
 };
 
